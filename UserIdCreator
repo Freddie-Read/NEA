@@ -1,0 +1,67 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Id_Creator
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string email = Console.ReadLine();
+            double emailLength = email.Length;
+
+            int len = Convert.ToInt32(Math.Round(emailLength / 6));
+            Console.WriteLine($"{emailLength}, {emailLength / 6}, {Math.Round(emailLength / 6)}");
+            string[] chunks = new string[6];
+
+            int x = 0;
+
+            for (int i = 0; i < 6; i++)
+            {
+                for (int j = x; j < x + len; j++)
+                {
+                    if (email[j] != ' ')
+                    {
+                        chunks[i] = chunks[i] + email[j];
+                    }
+                }
+                x += len;
+            }
+
+            foreach (var item in chunks)
+            {
+                Console.WriteLine(item);
+            }
+
+            int[] asciiVal = new int[6];
+
+            for (int i = 0; i < 6; i++)
+            {
+                byte[] asciiCode = Encoding.ASCII.GetBytes(chunks[i]);
+                asciiVal[i] = BitConverter.ToInt32(asciiCode, 0);
+            }
+
+            foreach (var item in asciiVal)
+            {
+                Console.WriteLine(item);
+            }            
+
+            string values = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+            string id = "";
+
+            for (int i = 0; i < 6; i++)
+            {
+                id += values[asciiVal[i] % 53];
+            }
+
+            Console.WriteLine(id);
+
+
+            Console.ReadLine();
+        }                
+    }
+}
