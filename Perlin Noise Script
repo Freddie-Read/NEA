@@ -9,7 +9,7 @@ public class PerlinNoise : MonoBehaviour
     public int width = 256;
     public int height = 256;
 
-    public float scale = 1f;
+    public float scale = 20f;
 
     public float offsetX = 100f;
     public float offsetY = 100f;
@@ -30,13 +30,18 @@ public class PerlinNoise : MonoBehaviour
     {
         Texture2D texture = new Texture2D(width, height);
 
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < width; x += 3)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < height; y += 3)
             {
                 Color color = CalculateColour(x, y);
-                texture.SetPixel(x, y, color);
-
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        texture.SetPixel(x + i, y + j, color);
+                    }
+                }
             }
         }
 
@@ -50,6 +55,7 @@ public class PerlinNoise : MonoBehaviour
         float yCoord = (float)y / height * scale + offsetY;
 
         float sample = Mathf.PerlinNoise(xCoord, yCoord);
+
         if (sample < 0.2)
         {
             return Color.cyan;
@@ -60,23 +66,16 @@ public class PerlinNoise : MonoBehaviour
         }
         else if (sample < 0.6)
         {
-            return Color.green;
+            return new Color(0f, 100f, 0f, 1f);
         }
         else if (sample < 0.8)
         {
-            return Color.green;
-        }
-        else if (sample < 0.9)
-        {
-            return Color.grey;
+            return new Color(0f, 255f, 0f, 0.5f);
         }
         else
         {
             return Color.white;
         }
-        //return Color.red;
-        //return new Color(sample, sample, sample);
     }
-
 
 }
