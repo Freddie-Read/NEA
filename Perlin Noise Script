@@ -7,13 +7,16 @@ using UnityEngine.PlayerLoop;
 public class PerlinNoise : MonoBehaviour
 {
     //Sets width, height and scale of the perlin noise, as well as initialising the offset values
+    //All are public variables so that they can be edited in the Unity client
     public int width = 256;
     public int height = 256;
 
-    public float scale = 20f;
+    public float scale = 4f;
 
     public float offsetX = 100f;
     public float offsetY = 100f;
+
+    public int squareSize = 5;
 
     void Start()
     {
@@ -37,15 +40,15 @@ public class PerlinNoise : MonoBehaviour
 
         //Loops through every 3rd pixel, creating a 3x3 box from the top left each time based on the colour
         //inputs
-        for (int x = 0; x < width; x += 3)
+        for (int x = 0; x < width; x += squareSize)
         {
-            for (int y = 0; y < height; y += 3)
+            for (int y = 0; y < height; y += squareSize)
             {
                 //Generates a colour based on the x and y co-ord height
                 Color color = CalculateColour(x, y);
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < squareSize; i++)
                 {
-                    for (int j = 0; j < 3; j++)
+                    for (int j = 0; j < squareSize; j++)
                     {
                         //Creates the 3x3 box
                         texture.SetPixel(x + i, y + j, color);
