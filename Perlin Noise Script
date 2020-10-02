@@ -3,30 +3,29 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using System.Collections.Generic;
+using System.IO;
+using UnityEditor.VersionControl;
 
 public class PerlinNoise : MonoBehaviour
 {
     //Sets width, height and scale of the perlin noise, as well as initialising the offset values
     //All are public variables so that they can be edited in the Unity client
-    public int width = 256;
-    public int height = 256;
+    public int width = 250;
+    public int height = 250;
 
     public float scale = 4f;
 
-    public float offsetX = 100f;
-    public float offsetY = 100f;
+    public Int64 offsetX = 100;
+    public Int64 offsetY = 100;
 
-    public int squareSize = 5;
+    public int squareSize = 10;
 
     void Start()
     {
         //Randomises the offset values using Unity's Engine so that the map is different every time
-        offsetX = UnityEngine.Random.Range(0f, 99999f);
-        offsetY = UnityEngine.Random.Range(0f, 99999f);
-    }
-
-    void Update()
-    {
+        offsetX = UnityEngine.Random.Range(0, 99999);
+        offsetY = UnityEngine.Random.Range(0, 99999);
         //Changes the texture of the renderer material (quad in main project) to whatever the function
         //GenerateTexture() creates
         Renderer renderer = GetComponent<Renderer>();
@@ -38,30 +37,31 @@ public class PerlinNoise : MonoBehaviour
         //Creats the texture equal to the width and height
         Texture2D texture = new Texture2D(width, height);
 
-        //Loops through every 3rd pixel, creating a 3x3 box from the top left each time based on the colour
+        //Loops through every 3rd pixel, creating a squareSize x squareSize box from the top left each time based on the colour
         //inputs
         for (int x = 0; x < width; x += squareSize)
         {
             for (int y = 0; y < height; y += squareSize)
             {
                 //Generates a colour based on the x and y co-ord height
-                Color color = CalculateColour(x, y);
+                Color color = CalculateColour(x, y, y / squareSize);
                 for (int i = 0; i < squareSize; i++)
                 {
                     for (int j = 0; j < squareSize; j++)
                     {
-                        //Creates the 3x3 box
+                        //Creates the squareSize x squareSize box
                         texture.SetPixel(x + i, y + j, color);
                     }
                 }
             }
         }
+
         //Applys the texture to the variable
         texture.Apply();
         return texture;
     }
 
-    Color CalculateColour(int x, int y)
+    Color CalculateColour(int x, int y, int level)
     {
         //Calculates the float x and y value so that it can be input into the PerlinNoise function
         float xCoord = (float)x / width * scale + offsetX;
@@ -73,28 +73,50 @@ public class PerlinNoise : MonoBehaviour
         if (perlinVal < 0.2)
         {
             //Water
+            StoreMap(0, level);
+            MapTextfile();
             return new Color(0f, 183f, 235f, 1f);
         }
         else if (perlinVal < 0.4)
         {
             //Sand
+            StoreMap(1, level);
+            MapTextfile();
             return new Color(255f, 194f, 0f, 1f);
         }
         else if (perlinVal < 0.6)
         {
             //Grass
+            StoreMap(2, level);
+            MapTextfile();
             return new Color(0f, 100f, 0f, 1f);
         }
         else if (perlinVal < 0.8)
         {
             //Hills
+            StoreMap(3, level);
+            MapTextfile();
             return new Color(0f, 255f, 0f, 0.5f);
         }
         else
         {
             //Mountain
+            StoreMap(4, level);
+            MapTextfile();
             return new Color(244f, 245f, 226f, 1f);
         }
+    }
+
+    string[] mapArr = new string[25];
+    void StoreMap(int value, int level)
+    {
+        mapArr[level] = mapArr[level] + Convert.ToString(value);
+    }
+
+    void MapTextfile()
+    {
+        string filePath = @"C:\Users\Freddie\Desktop\textFiles\map.txt";
+        File.WriteAllLines(filePath, mapArr);
     }
 
 }
