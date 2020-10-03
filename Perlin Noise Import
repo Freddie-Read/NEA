@@ -48,10 +48,12 @@ public class PerlinNoiseImport : MonoBehaviour
     {
         string filePath = @"C:\Users\Freddie\Desktop\textFiles\map.txt";
 
+        //Reads the file into an array
         string[] mapLines = File.ReadAllLines(filePath);
 
         string mapStrip = mapLines[level];
 
+        //Reads the char in the line and displays a colour based on the char
         switch (mapStrip[x])
         {
             case '0':
