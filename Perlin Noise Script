@@ -110,11 +110,13 @@ public class PerlinNoise : MonoBehaviour
     string[] mapArr = new string[25];
     void StoreMap(int value, int level)
     {
+        //Creates and populates the array mapArr with the map values
         mapArr[level] = mapArr[level] + Convert.ToString(value);
     }
 
     void MapTextfile()
     {
+        //Stores the map line by line in an external file
         string filePath = @"C:\Users\Freddie\Desktop\textFiles\map.txt";
         File.WriteAllLines(filePath, mapArr);
     }
