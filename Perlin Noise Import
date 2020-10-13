@@ -56,13 +56,13 @@ public class PerlinNoiseImport : MonoBehaviour
         //Reads the char in the line and displays a colour based on the char
         switch (mapStrip[x])
         {
-            case '0':
+            case '3':
                 return new Color(0f, 183f, 235f, 1f);
             case '1':
                 return new Color(255f, 194f, 0f, 1f);
-            case '2':
+            case '0':
                 return new Color(0f, 100f, 0f, 1f);
-            case '3':
+            case '2':
                 return new Color(0f, 255f, 0f, 0.5f);
             case '4':
                 return new Color(244f, 245f, 226f, 1f);
