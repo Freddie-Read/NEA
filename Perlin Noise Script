@@ -73,7 +73,7 @@ public class PerlinNoise : MonoBehaviour
         if (perlinVal < 0.2)
         {
             //Water
-            StoreMap(0, level);
+            StoreMap(3, level);
             MapTextfile();
             return new Color(0f, 183f, 235f, 1f);
         }
@@ -87,14 +87,14 @@ public class PerlinNoise : MonoBehaviour
         else if (perlinVal < 0.6)
         {
             //Grass
-            StoreMap(2, level);
+            StoreMap(0, level);
             MapTextfile();
             return new Color(0f, 100f, 0f, 1f);
         }
         else if (perlinVal < 0.8)
         {
             //Hills
-            StoreMap(3, level);
+            StoreMap(2, level);
             MapTextfile();
             return new Color(0f, 255f, 0f, 0.5f);
         }
