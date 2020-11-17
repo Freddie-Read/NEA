@@ -1,0 +1,51 @@
+using System.Collections.Generic;
+using UnityEngine;
+using System.IO;
+using System.Linq;
+using TMPro;
+
+public class DropdownOptions : MonoBehaviour
+{
+    //Calls list of options from database (currently locally stored)
+    string[] colourOptions = File.ReadAllLines(@"C:\Users\Freddie\Desktop\textFiles\colourOptions.txt");
+
+    TMP_Dropdown dropDown;
+
+    void Start()
+    {
+        //Converts array into a usable list
+        List<string> dropDownOptions = colourOptions.ToList<string>();
+
+        //Gets the Text Mesh Pro Dropdown object using the script
+        dropDown = GetComponent<TMP_Dropdown>();
+
+        //Clears current options
+        dropDown.ClearOptions();
+
+        //Adds options from the list
+        dropDown.AddOptions(dropDownOptions);
+
+        //Will display based on the default colour
+        switch (dropDown.name)
+        {
+            case "Water Dropdown":
+                dropDown.value = 0;
+                break;
+            case "Sand Dropdown":
+                dropDown.value = 1;
+                break;
+            case "Grass Dropdown":
+                dropDown.value = 2;
+                break;
+            case "Hill Dropdown":
+                dropDown.value = 3;
+                break;
+            case "Mountain Dropdown":
+                dropDown.value = 4;
+                break;
+            default:
+                break;
+        }
+
+    }
+}
