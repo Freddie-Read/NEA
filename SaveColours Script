@@ -1,0 +1,31 @@
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using System.IO;
+
+public class SaveColours : MonoBehaviour
+{
+    public Button saveColoursBtn;
+    public TMP_Dropdown water;
+    public TMP_Dropdown sand;
+    public TMP_Dropdown grass;
+    public TMP_Dropdown hill;
+    public TMP_Dropdown mountain;
+
+    string[] colourOptions = File.ReadAllLines(@"C:\Users\Freddie\Desktop\textFiles\colourOptions.txt");
+
+    void Start()
+    {
+        Button saveColoursFnc = saveColoursBtn.GetComponent<Button>();
+        saveColoursFnc.onClick.AddListener(OnClick);
+    }
+
+    void OnClick()
+    {
+        string[] userColours = { $"{colourOptions[water.value]},{water.value}", $"{colourOptions[sand.value]},{sand.value}",
+            $"{colourOptions[grass.value]},{grass.value}", $"{colourOptions[hill.value]},{hill.value}",
+            $"{colourOptions[mountain.value]},{mountain.value}" };
+        File.WriteAllLines(@"C:\Users\Freddie\Desktop\textFiles\userColours.csv", userColours);
+    }
+
+}
