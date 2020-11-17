@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using System.IO;
 using System.Linq;
@@ -13,6 +14,18 @@ public class DropdownOptions : MonoBehaviour
 
     void Start()
     {
+        List<int> colourIndex = new List<int>();
+        using (var reader = new StreamReader(@"C:\Users\Freddie\Desktop\textFiles\userColours.csv"))
+        {
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                var values = line.Split(',');
+
+                colourIndex.Add(Convert.ToInt32(values[1]));
+            }
+        }
+
         //Converts array into a usable list
         List<string> dropDownOptions = colourOptions.ToList<string>();
 
@@ -25,25 +38,26 @@ public class DropdownOptions : MonoBehaviour
         //Adds options from the list
         dropDown.AddOptions(dropDownOptions);
 
-        //Will display based on the default colour
+        //Will display based on the user's default colour
         switch (dropDown.name)
         {
             case "Water Dropdown":
-                dropDown.value = 0;
+                dropDown.value = colourIndex[0];
                 break;
             case "Sand Dropdown":
-                dropDown.value = 1;
+                dropDown.value = colourIndex[1];
                 break;
             case "Grass Dropdown":
-                dropDown.value = 2;
+                dropDown.value = colourIndex[2];
                 break;
             case "Hill Dropdown":
-                dropDown.value = 3;
+                dropDown.value = colourIndex[3];
                 break;
             case "Mountain Dropdown":
-                dropDown.value = 4;
+                dropDown.value = colourIndex[4];
                 break;
             default:
+                dropDown.value = 0;
                 break;
         }
 
