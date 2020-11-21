@@ -8,26 +8,27 @@ using TMPro;
 public class DropdownOptions : MonoBehaviour
 {
     //Calls list of options from database (currently locally stored)
-    string[] colourOptions = File.ReadAllLines(@"C:\Users\Freddie\Desktop\textFiles\colourOptions.txt");
+    string[] userColours = File.ReadAllLines(@"C:\Users\Freddie\Desktop\textFiles\userColours.txt");
 
     TMP_Dropdown dropDown;
 
     void Start()
     {
-        List<int> colourIndex = new List<int>();
-        using (var reader = new StreamReader(@"C:\Users\Freddie\Desktop\textFiles\userColours.csv"))
+        //Reads list of colours from file and adds it to a list
+        List<string> colourIndex = new List<string>();
+        using (var reader = new StreamReader(@"C:\Users\Freddie\Desktop\textFiles\colourOptions.csv"))
         {
             while (!reader.EndOfStream)
             {
                 var line = reader.ReadLine();
                 var values = line.Split(',');
 
-                colourIndex.Add(Convert.ToInt32(values[1]));
+                colourIndex.Add(values[1]);
             }
         }
 
         //Converts array into a usable list
-        List<string> dropDownOptions = colourOptions.ToList<string>();
+        List<string> dropDownOptions = colourIndex.ToList<string>();
 
         //Gets the Text Mesh Pro Dropdown object using the script
         dropDown = GetComponent<TMP_Dropdown>();
@@ -38,23 +39,23 @@ public class DropdownOptions : MonoBehaviour
         //Adds options from the list
         dropDown.AddOptions(dropDownOptions);
 
-        //Will display based on the user's default colour
+        //Will display based on the user's saved colour
         switch (dropDown.name)
         {
             case "Water Dropdown":
-                dropDown.value = colourIndex[0];
+                dropDown.value = Convert.ToInt32(userColours[0]);
                 break;
             case "Sand Dropdown":
-                dropDown.value = colourIndex[1];
+                dropDown.value = Convert.ToInt32(userColours[1]);
                 break;
             case "Grass Dropdown":
-                dropDown.value = colourIndex[2];
+                dropDown.value = Convert.ToInt32(userColours[2]);
                 break;
             case "Hill Dropdown":
-                dropDown.value = colourIndex[3];
+                dropDown.value = Convert.ToInt32(userColours[3]);
                 break;
             case "Mountain Dropdown":
-                dropDown.value = colourIndex[4];
+                dropDown.value = Convert.ToInt32(userColours[4]);
                 break;
             default:
                 dropDown.value = 0;
