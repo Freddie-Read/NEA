@@ -1,0 +1,24 @@
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
+
+public class PreviewColour : MonoBehaviour
+{
+    public TMP_Dropdown dropdown;
+    Image displayColour;
+
+    void Start()
+    {
+        displayColour = GetComponent<Image>();
+    }
+
+    void Update()
+    {
+        List<string> colourIndex = GetColours.giveColour(0);
+        Color32 colour = ColourChoice.ColourMatch(dropdown.value);
+
+        displayColour.color = colour;
+    }       
+        
+}
