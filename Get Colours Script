@@ -1,0 +1,32 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System.IO;
+
+public class GetColours : MonoBehaviour
+{
+    public static List<string> giveColour(int valNeeded)
+    {
+        List<string> colourIndex = new List<string>();
+        List<string> colourNames = new List<string>();
+        using (var reader = new StreamReader(@"C:\Users\Freddie\Desktop\textFiles\colourOptions.csv"))
+        {
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                var values = line.Split(',');
+
+                colourIndex.Add(values[0]);
+                colourNames.Add(values[1]);
+            }
+        }
+        switch (valNeeded)
+        {
+            case 0:
+                return colourIndex;
+            case 1:
+                return colourNames;
+        }
+        return null;
+    }
+}
