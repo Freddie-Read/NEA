@@ -15,17 +15,7 @@ public class DropdownOptions : MonoBehaviour
     void Start()
     {
         //Reads list of colours from file and adds it to a list
-        List<string> colourIndex = new List<string>();
-        using (var reader = new StreamReader(@"C:\Users\Freddie\Desktop\textFiles\colourOptions.csv"))
-        {
-            while (!reader.EndOfStream)
-            {
-                var line = reader.ReadLine();
-                var values = line.Split(',');
-
-                colourIndex.Add(values[1]);
-            }
-        }
+        List<string> colourIndex = GetColours.giveColour(1);        
 
         //Converts array into a usable list
         List<string> dropDownOptions = colourIndex.ToList<string>();
