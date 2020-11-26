@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.IO;
+using System.Collections.Generic;
 
 public class SaveColours : MonoBehaviour
 {
@@ -12,8 +13,6 @@ public class SaveColours : MonoBehaviour
     public TMP_Dropdown hill;
     public TMP_Dropdown mountain;
 
-    string[] colourOptions = File.ReadAllLines(@"C:\Users\Freddie\Desktop\textFiles\colourOptions.txt");
-
     void Start()
     {
         Button saveColoursFnc = saveColoursBtn.GetComponent<Button>();
@@ -22,10 +21,11 @@ public class SaveColours : MonoBehaviour
 
     void OnClick()
     {
-        string[] userColours = { $"{colourOptions[water.value]},{water.value}", $"{colourOptions[sand.value]},{sand.value}",
-            $"{colourOptions[grass.value]},{grass.value}", $"{colourOptions[hill.value]},{hill.value}",
-            $"{colourOptions[mountain.value]},{mountain.value}" };
-        File.WriteAllLines(@"C:\Users\Freddie\Desktop\textFiles\userColours.csv", userColours);
+        List<string> colourIndex = GetColours.giveColour(0);
+
+        string[] userColours = { water.value.ToString(), sand.value.ToString(), grass.value.ToString(),
+            hill.value.ToString(), mountain.value.ToString() };
+        File.WriteAllLines(@"C:\Users\Freddie\Desktop\textFiles\userColours.txt", userColours);
     }
 
 }
