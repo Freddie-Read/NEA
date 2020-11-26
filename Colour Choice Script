@@ -1,0 +1,72 @@
+using UnityEngine;
+using System.IO;
+using System;
+
+public class ColourChoice : MonoBehaviour
+{
+
+    public static Color giveColour(int weight)
+    {
+        string[] userColours = File.ReadAllLines(@"C:\Users\Freddie\Desktop\textFiles\userColours.txt");
+
+        switch (weight)
+        {
+            case 0: //Grass
+                return ColourMatch(Convert.ToInt32(userColours[2]));
+            case 1: //Sand
+                return ColourMatch(Convert.ToInt32(userColours[1]));
+            case 2: //Hill
+                return ColourMatch(Convert.ToInt32(userColours[3]));
+            case 3: //Water
+                return ColourMatch(Convert.ToInt32(userColours[0]));
+            case 4: //Mountain
+                return ColourMatch(Convert.ToInt32(userColours[4]));
+            default:
+                return ColourMatch(userColours.Length + 1);
+        }
+    }
+
+    public static Color ColourMatch(int colour)
+    {
+        switch (colour)
+        {
+            case 0:
+                //Blue
+                return new Color32(0, 246, 255, 255);
+            case 1:
+                //Yellow
+                return new Color32(255, 247, 4, 255);
+            case 2:
+                //Lime
+                return new Color32(0, 255, 0, 255);
+            case 3:
+                //Green
+                return new Color32(43, 192, 61, 255);
+            case 4:
+                //White
+                return new Color32(255, 255, 255, 255);
+            case 5:
+                //Turquoise
+                return new Color32(64, 224, 208, 255);
+            case 6:
+                //Moccasin
+                return new Color32(255, 228, 181, 255);
+            case 7:
+                //Sea-Green
+                return new Color32(60, 170, 113, 255);
+            case 8:
+                //Dark Olive
+                return new Color32(85, 107, 47, 255);
+            case 9:
+                //Ivory
+                return new Color32(255, 255, 240, 255);
+            case 10:
+                //Black
+                return new Color32(0, 0, 0, 255);
+            default:
+                //Magenta
+                return new Color32(255, 0, 255, 255);
+        }
+    }
+
+}
