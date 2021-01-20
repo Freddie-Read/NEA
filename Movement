@@ -1,0 +1,36 @@
+using UnityEngine;
+
+public class Movement : MonoBehaviour
+{
+    public GameObject quad = new GameObject();
+    void Start()
+    {
+        quad.transform.position = new Vector3(-4.8f, 4.8f, -1);
+    }
+
+    void Update()
+    {
+
+        Vector3 pos = quad.transform.position;
+        if (Input.GetKeyDown("s"))
+        {
+            pos[1] = pos[1] - 0.4f;
+            quad.transform.position = pos;
+        }
+        else if (Input.GetKeyDown("d"))
+        {
+            pos[0] = pos[0] + 0.4f;
+            quad.transform.position = pos;
+        }
+        else if (Input.GetKeyDown("w"))
+        {
+            pos[1] = pos[1] + 0.4f;
+            quad.transform.position = pos;
+        }
+        else if (Input.GetKeyDown("a"))
+        {
+            pos[0] = pos[0] - 0.4f;
+            quad.transform.position = pos;
+        }
+    }
+}
