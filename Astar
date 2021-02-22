@@ -1,0 +1,138 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+using System.Linq;
+
+public class Astar : MonoBehaviour
+{
+    public static void getBestPath()
+    {
+        string[] map = PerlinNoise.mapArr;
+        char[,] tileMap = convertMap(map);
+        int bestPath = aStarAlgorithm(tileMap, map.Length);
+        Debug.Log(bestPath);
+    }
+
+    static int aStarAlgorithm(char[,] tileMap, int length)
+    {
+        int startX = 0;
+        int startY = 0;
+        int g = 0; //g is total moved so far
+
+        List<coOrds> openList = new List<coOrds>();
+        List<coOrds> closedList = new List<coOrds>();
+
+        coOrds startNode = new coOrds { X = startX, Y = startY };
+        coOrds endNode = new coOrds { X = length, Y = length };
+        coOrds currentNode = startNode;
+
+        openList.Add(startNode);
+
+        while (currentNode != endNode)
+        {
+            currentNode = getFScore(openList, startNode, endNode, g);
+            if (currentNode == endNode)
+            {
+                break;
+            }
+            else
+            {
+                closedList.Add(endNode);
+                List<coOrds> neighbours = getNeighbours(currentNode, length);
+                foreach (var item in neighbours)
+                {
+                    //Returns int value of tile movement
+                    g += AdjacencyList.GetWeights(tileMap[currentNode.X, currentNode.Y], tileMap[item.X, item.Y]);
+                    if (item.G < currentNode.G && closedList.Contains(item))
+                    {
+                        item.G = g;
+                        item.parent = currentNode;
+                    }
+                    else if (currentNode.G < item.G && openList.Contains(item))
+                    {
+                        item.G = g;
+                        item.parent = currentNode;
+                    }
+                    else if (!openList.Contains(item) && !closedList.Contains(item))
+                    {
+                        openList.Add(item);
+                        item.G = g + AdjacencyList.GetWeights(tileMap[currentNode.X, currentNode.Y], tileMap[item.X, item.Y]);
+                    }
+                }
+            }
+        }
+        return g;
+    }
+
+    static coOrds getFScore(List<coOrds> openList, coOrds startNode, coOrds endNode, int g)
+    {
+        foreach (var item in openList)
+        {
+            if (item.F == 0)
+            {
+                //h=(xstart​−xdestination​)2+(ystart​−ydestination​)2
+                item.H = ((startNode.X - endNode.X)^2 + (startNode.Y - endNode.Y)^2)^(1/2);
+                item.F = item.H + g;
+            }
+        }
+        int length = openList.Count;
+        int lowest = 1000;
+        coOrds lowFCoOrd = openList[0];
+
+        for (int i = 0; i < length; i++)
+        {
+            if (openList[i].F < lowest)
+            {
+                lowFCoOrd = openList[i];
+            }
+        }
+
+        return lowFCoOrd;
+    }
+
+    static char[,] convertMap(string[] map)
+    {
+        int length = map.Length;
+        char[,] tileMap = new char[length, length];
+        for (int i = 0; i < length; i++)
+        {
+            for (int j = 0; j < length; j++)
+            {
+                string mapStrip = map[i];
+                tileMap[i, j] = mapStrip[j];
+            }
+        }
+        return tileMap;
+    }
+
+    static List<coOrds> getNeighbours(coOrds currentNode, int length)
+    {
+        List<coOrds> neighbours = new List<coOrds>();
+        List<coOrds> neighboursTry = new List<coOrds>();
+        neighboursTry.Add(new coOrds { X = currentNode.X, Y = currentNode.Y - 1 });
+        neighboursTry.Add(new coOrds { X = currentNode.X, Y = currentNode.Y + 1 });
+        neighboursTry.Add(new coOrds { X = currentNode.X - 1, Y = currentNode.Y });
+        neighboursTry.Add(new coOrds { X = currentNode.X + 1, Y = currentNode.Y });
+
+        for (int i = 0; i < neighboursTry.Count; i++)
+        {
+            if (neighboursTry[i].X > 0 && neighboursTry[i].Y > 0 && neighboursTry[i].X < length && neighboursTry[i].Y < length)
+            {
+                neighbours.Add(neighboursTry[i]);
+                Debug.Log(neighboursTry[i]);
+            }
+        }
+        return neighbours;
+    }
+
+    class coOrds
+    {
+        public int X; //x co-ord
+        public int Y; //y co-ord
+        public int F; //estimated cost of whole path (G + H)
+        public int G; //cost so far
+        public int H; //cost to go
+        public coOrds parent;
+    }
+}
