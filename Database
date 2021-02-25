@@ -1,0 +1,252 @@
+using UnityEngine;
+using System;
+using System.Data.OleDb;
+//using System.Data;
+using MySql.Data;
+using MySql.Data.MySqlClient;
+
+public class Database : MonoBehaviour
+{
+    private MySqlConnection connection = new MySqlConnection("server=nea-database.cr2rnnwfbjfp.us-east-2.rds.amazonaws.com;" +
+            "user=admin;database=NeaDatabase;port=3306;password=freddie747");
+
+    public void Connect()
+    {        
+        try
+        {
+            Debug.Log("Connecting to MySQL...");
+            connection.Open();
+
+            string sql = "SELECT * FROM tblUsers";
+            MySqlCommand command = new MySqlCommand(sql, connection);
+            object result = command.ExecuteScalar();
+            if (result != null)
+            {
+                Debug.Log(result);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.ToString());
+        }
+
+        connection.Close();
+    }
+
+    public void addUser(string userID, string surname, string email, string password, 
+        int musicVol, int[] tile)
+    {
+        try
+        {
+            connection.Open();
+            Debug.Log("Adding User...");
+            string addUser = $"INSERT INTO tblUsers VALUES('{userID}','{surname}','{email}','{password}'," +
+                $"{musicVol},{tile[0]},{tile[1]},{tile[2]},{tile[3]},{tile[4]})";
+            MySqlCommand command = new MySqlCommand(addUser, connection);
+            command.ExecuteNonQuery();
+            Debug.Log("Added User");
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex);
+        }
+        connection.Close();
+    }
+
+    public void addMapScore(string mapID, string userID, int score)
+    {
+        bool firstExists = checkRecordExists("tblUserScores", "MapID", mapID);
+        bool secondExists = checkRecordExists("tblUserScores", "UserID", userID);
+        if (firstExists == true && secondExists == true)
+        {
+            try
+            {
+                Debug.Log("Adding Map Score (1)...");
+                connection.Open();
+
+                string sql = "SELECT Score FROM tblUserScores";
+                MySqlCommand command = new MySqlCommand(sql, connection);
+                object result = command.ExecuteScalar();
+                connection.Close();
+                if (Convert.ToInt32(result) > score)
+                {
+                    try
+                    {
+                        connection.Open();
+                        Debug.Log("Adding Map Score (2)...");
+                        string updateRecord = $"UPDATE tblUserScores SET Score = {score} WHERE MapID = {mapID} AND UserID = {userID}";
+                        command = new MySqlCommand(updateRecord, connection);
+                        command.ExecuteNonQuery();
+                        Debug.Log("Updated Score");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Log(ex);
+                    }
+                    connection.Close();
+                }
+                else
+                {
+                    Debug.Log("Better score in Database");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex.ToString());
+            }
+
+            connection.Close();
+        }
+        else
+        {
+            try
+            {
+                connection.Open();
+                Debug.Log("Connecting to MySQL...");
+                string addScore = $"INSERT INTO tblUserScores VALUES('{mapID}', '{userID}', {score})";
+                MySqlCommand command = new MySqlCommand(addScore, connection);
+                command.ExecuteNonQuery();
+                Debug.Log("Added Score");
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex);
+            }
+            connection.Close();
+        }
+        
+    }
+
+    public void addMap(string mapID, int bestPath = 0)
+    {
+        bool exists = checkRecordExists("tblMaps", "MapID", mapID);
+        if (exists == false)
+        {
+            try
+            {
+                Debug.Log(mapID + " " + mapID.Length);
+                connection.Open();
+                Debug.Log("Adding Map...");
+                string addMap = $"INSERT INTO tblMaps(MapID) VALUES('{mapID}')";
+                MySqlCommand command = new MySqlCommand(addMap, connection);
+                command.ExecuteNonQuery();
+                Debug.Log("Added Map");
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex);
+            }
+            connection.Close();
+        }
+    }
+
+    public bool checkRecordExists(string table, string column, string value)
+    {
+        try
+        {
+            Debug.Log("Checking Record...");
+            connection.Open();
+
+            string sql = $"SELECT {column} FROM {table} WHERE {column} = {value}";
+            MySqlCommand command = new MySqlCommand(sql, connection);
+            object result = command.ExecuteScalar();
+            connection.Close();
+            if (result == null)
+            {
+                return false;
+            }
+            else
+            {
+                Debug.Log("Record Exists");
+                return true;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.ToString());
+        }
+        connection.Close();
+        return false;
+
+    }
+
+
+    /*private OleDbConnection connection = new OleDbConnection();
+
+    void connectionPath()
+    {
+        connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=//C:\Users\Freddie\Documents\
+Databases\NEA.accdb;Persist Security Info=False;";
+    }
+    public void addUser(string userID, string surname, string email, string password, string accountCreated, int musicVol, int[] tile)
+    {
+        try
+        {
+            connection.Open();
+            OleDbCommand command = new OleDbCommand();
+            command.Connection = connection;
+            command.CommandText = $"INSERT INTO tblUsers VALUES('{userID}', '{surname}', '{email}', '{password}', " +
+                $"'{accountCreated}', {musicVol}, {tile[0]}, {tile[1]}, {tile[2]}, {tile[3]}, {tile[4]}); ";
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    public void newMapScore(string userID, string mapID, int score)
+    {
+        try
+        {
+            connection.Open();
+            OleDbCommand command = new OleDbCommand();
+            command.Connection = connection;
+            command.CommandText = $"INSERT INTO tblUserScores VALUES('{userID}', '{mapID}', {score}";
+            command.ExecuteNonQuery();
+            connection.Close();
+
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    public void newMap(string mapID, int bestPath, Time TTC)
+    {
+        try
+        {
+            connection.Open();
+            OleDbCommand command = new OleDbCommand();
+            command.Connection = connection;
+            command.CommandText = $"INSERT INTO tblMaps VALUES('{mapID}', {bestPath}, {TTC}";
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    public string getUserID(string email, string password)
+    {
+        try
+        {
+            connection.Open();
+            OleDbCommand command = new OleDbCommand();
+            command.Connection = connection;
+            command.CommandText = $"SELECT UserID FROM tblUsers WHERE tblUsers.Email = '{email}' AND tblUsers.Password = '{password}'";
+            OleDbDataReader reader = command.ExecuteReader();
+            connection.Close();
+            return reader.ToString();
+        }
+        catch (Exception)
+        {
+        }
+        return "null";
+    }
+    */
+}
