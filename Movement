@@ -1,36 +1,104 @@
 using UnityEngine;
+using System;
+using TMPro;
 
 public class Movement : MonoBehaviour
 {
     public GameObject quad = new GameObject();
+    public TMP_Text currentScore;
+    public TMP_Text timeTaken;
+    public TMP_Text totalScore;
+    public TMP_Text seed;
+    float stopWatch;
+    public float speed = 1;
+
     void Start()
     {
         quad.transform.position = new Vector3(-4.8f, 4.8f, -1);
+        string[] map = getMap();
+        string mapLine = map[0];
+        prevTile = mapLine[0];
     }
 
+    int totalTime = 0;
+    bool finished = false;
     void Update()
     {
-
         Vector3 pos = quad.transform.position;
-        if (Input.GetKeyDown("s"))
+
+        if (Math.Round(pos[0]) == 5 && Math.Round(pos[1]) == -5)
         {
-            pos[1] = pos[1] - 0.4f;
-            quad.transform.position = pos;
+            int score = totalMoved + totalTime;
+            totalScore.text = $"Total Score: {score}";
+            if (finished == false)
+            {
+                mapFinished(score);
+                finished = true;
+            }
+            return;
         }
-        else if (Input.GetKeyDown("d"))
+        else
         {
-            pos[0] = pos[0] + 0.4f;
-            quad.transform.position = pos;
+            stopWatch += Time.deltaTime * speed;
+            string minutes = Mathf.Floor((stopWatch % 3600) / 60).ToString("00");
+            string seconds = (stopWatch % 60).ToString("00");
+            timeTaken.text = $"Current Time: {minutes}:{seconds}";
+            totalTime = (Convert.ToInt32(minutes) * 60) + Convert.ToInt32(seconds);
+            if (Input.GetKeyDown("s"))
+            {
+                pos[1] = pos[1] - 0.4f;
+                quad.transform.position = pos;
+                moved(pos, getMap());
+            }
+            else if (Input.GetKeyDown("d"))
+            {
+                pos[0] = pos[0] + 0.4f;
+                quad.transform.position = pos;
+                moved(pos, getMap());
+            }
+            else if (Input.GetKeyDown("w"))
+            {
+                pos[1] = pos[1] + 0.4f;
+                quad.transform.position = pos;
+                moved(pos, getMap());
+            }
+            else if (Input.GetKeyDown("a"))
+            {
+                pos[0] = pos[0] - 0.4f;
+                quad.transform.position = pos;
+                moved(pos, getMap());
+            }
         }
-        else if (Input.GetKeyDown("w"))
-        {
-            pos[1] = pos[1] + 0.4f;
-            quad.transform.position = pos;
-        }
-        else if (Input.GetKeyDown("a"))
-        {
-            pos[0] = pos[0] - 0.4f;
-            quad.transform.position = pos;
-        }
+        
+    }
+
+    char prevTile = ' ';
+    int totalMoved = 0;
+    void moved(Vector3 pos, string[] map)
+    {
+        float x = (pos[0] - -4.8f) / 0.4f;
+        float y = -(pos[1] - 4.8f) / 0.4f;
+        
+        string mapLine = map[Convert.ToInt32(y)];
+        char tile = mapLine[Convert.ToInt32(x)];
+
+        totalMoved += AdjacencyList.GetWeights(prevTile, tile);
+        currentScore.text = $"Current Move Score: {totalMoved}";
+        
+        prevTile = tile;
+    }
+
+    string[] getMap()
+    {
+        return PerlinNoise.mapArr;
+    }
+
+    void mapFinished(int score)
+    {
+        Database database = new Database();
+        string userID = "123456";
+        int[] tile = { 1, 1, 1, 1, 1 };
+        database.addUser(userID, "Read", "freddieread@hotmail.co.uk", "GUhjh4", 100, tile);
+        database.addMapScore(seed.text, userID, score);
     }
 }
