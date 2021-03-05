@@ -4,6 +4,8 @@ using System.Data.OleDb;
 //using System.Data;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using System.Linq;
+using System.Collections;
 
 public class Database : MonoBehaviour
 {
@@ -37,21 +39,26 @@ public class Database : MonoBehaviour
     public void addUser(string userID, string surname, string email, string password, 
         int musicVol, int[] tile)
     {
-        try
+        bool exists = checkRecordExists("tblUsers", "UserID", userID);
+        if (exists == false)
         {
-            connection.Open();
-            Debug.Log("Adding User...");
-            string addUser = $"INSERT INTO tblUsers VALUES('{userID}','{surname}','{email}','{password}'," +
-                $"{musicVol},{tile[0]},{tile[1]},{tile[2]},{tile[3]},{tile[4]})";
-            MySqlCommand command = new MySqlCommand(addUser, connection);
-            command.ExecuteNonQuery();
-            Debug.Log("Added User");
+            try
+            {
+                connection.Open();
+                Debug.Log("Adding User...");
+                string addUser = $"INSERT INTO tblUsers VALUES('{userID}','{surname}','{email}','{password}'," +
+                    $"{musicVol},{tile[0]},{tile[1]},{tile[2]},{tile[3]},{tile[4]})";
+                MySqlCommand command = new MySqlCommand(addUser, connection);
+                command.ExecuteNonQuery();
+                Debug.Log("Added User");
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex);
+            }
+            connection.Close();
         }
-        catch (Exception ex)
-        {
-            Debug.Log(ex);
-        }
-        connection.Close();
+        
     }
 
     public void addMapScore(string mapID, string userID, int score)
@@ -116,7 +123,8 @@ public class Database : MonoBehaviour
             }
             connection.Close();
         }
-        
+        mapLeaderboard(mapID, score);
+
     }
 
     public void addMap(string mapID, int bestPath = 0)
@@ -129,7 +137,7 @@ public class Database : MonoBehaviour
                 Debug.Log(mapID + " " + mapID.Length);
                 connection.Open();
                 Debug.Log("Adding Map...");
-                string addMap = $"INSERT INTO tblMaps(MapID) VALUES('{mapID}')";
+                string addMap = $"INSERT INTO tblMaps(MapID, BestPath) VALUES('{mapID}', {bestPath})";
                 MySqlCommand command = new MySqlCommand(addMap, connection);
                 command.ExecuteNonQuery();
                 Debug.Log("Added Map");
@@ -140,6 +148,79 @@ public class Database : MonoBehaviour
             }
             connection.Close();
         }
+    }
+
+    public void mapLeaderboard(string mapID, int score)
+    {
+        try
+        {
+            int[] scores = new int[10];
+            Debug.Log("Checking Leaderboards...");
+            connection.Open();
+            string getMapScores = $"SELECT Score1 FROM tblMaps WHERE MapID = '{mapID}'";
+            MySqlCommand command = new MySqlCommand(getMapScores, connection);
+            object result = command.ExecuteScalar();
+            if (result != DBNull.Value)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    getMapScores = $"SELECT Score{i + 1} FROM tblMaps WHERE MapID = '{mapID}'";
+                    command = new MySqlCommand(getMapScores, connection);
+                    result = command.ExecuteScalar();
+                    if (result == DBNull.Value)
+                        break;
+                    else
+                        Debug.Log(result.ToString());
+                        scores[i] = Convert.ToInt32(result);
+                }
+                bool changed = false;
+                int changedVal = 0;
+                for (int i = 0; i < 10; i++)
+                {
+                    if (scores[i] != 0)
+                    {
+                        if (score <= scores[i])
+                        {
+                            Debug.Log($"Score: {score}, ArrScore = {scores[i]}");
+                            int temp = scores[i];
+                            scores[i] = score;
+                            score = temp;
+                            changed = true;
+                            changedVal = i;
+                        }
+                    }
+                    
+                }
+                if (changed == true)
+                {
+                    for (int i = changedVal; i < 10 - changedVal; i++)
+                    {
+                        string updateMap = $"UPDATE tblMaps SET Score{i + 1} = {scores[i]} WHERE MapID = {mapID}";
+                        command = new MySqlCommand(updateMap, connection);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                else
+                {
+                    Debug.Log("Not added to Leaderboard");
+                }
+            }
+            else
+            {
+                string updateMap = $"UPDATE tblMaps SET Score1 = {score} WHERE MapID = '{mapID}'";
+                command = new MySqlCommand(updateMap, connection);
+                command.ExecuteNonQuery();
+            }
+
+            Debug.Log("Database Changed");
+            
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.ToString());
+        }
+
+        connection.Close();
     }
 
     public bool checkRecordExists(string table, string column, string value)
@@ -169,6 +250,7 @@ public class Database : MonoBehaviour
             Debug.Log(ex.ToString());
         }
         connection.Close();
+        Debug.Log("Record doesn't exist");
         return false;
 
     }
