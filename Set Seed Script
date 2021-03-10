@@ -1,0 +1,20 @@
+using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
+
+public class SetSeed : MonoBehaviour
+{
+    public TMP_InputField seed;
+    public Button searchSeedBtn;
+    void Start()
+    {
+        //Checks for if the button is pressed
+        searchSeedBtn.onClick.AddListener(playSeed);
+    }
+
+    void playSeed()
+    {
+        //Would call on Perlin Noise Script to generate map with the given MapID.
+    }
+
+}
