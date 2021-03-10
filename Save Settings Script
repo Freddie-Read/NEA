@@ -1,0 +1,33 @@
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using System;
+
+public class SaveSettings : MonoBehaviour
+{
+    //Publicly declaring variables so they can be assigned in Unity Editor.
+    public Button saveSettingsBtn;
+    public TMP_Dropdown water;
+    public TMP_Dropdown sand;
+    public TMP_Dropdown grass;
+    public TMP_Dropdown hill;
+    public TMP_Dropdown mountain;
+    public Slider volume;
+
+    void Start()
+    {
+        saveSettingsBtn.onClick.AddListener(changeSettings);
+    }
+
+    void changeSettings()
+    {
+        //Gets the user's settings and saves them to the database
+        int[] settings = { Convert.ToInt32(volume.value * 100), water.value, sand.value, grass.value,
+            hill.value, mountain.value };
+
+        Database database = new Database();
+        database.changeSettings(CurrentUser.userID, settings);
+
+    }
+
+}
