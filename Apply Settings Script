@@ -1,0 +1,39 @@
+using UnityEngine;
+using System;
+using TMPro;
+using UnityEngine.UI;
+
+public class ApplySettings : MonoBehaviour
+{
+    //Publicly declaring variables so they can be assigned in Unity Editor.
+    public Slider volume;
+    public TMP_Dropdown water;
+    public TMP_Dropdown sand;
+    public TMP_Dropdown grass;
+    public TMP_Dropdown hill;
+    public TMP_Dropdown mountain;
+
+    void Start()
+    {
+        Database database = new Database();
+
+        Debug.Log(CurrentUser.email);
+        Debug.Log(CurrentUser.userID);
+
+        //Stores the user's settings into an array so that they can be predictably extracted and assigned.
+        string[] settings = database.getSettings(CurrentUser.userID);
+
+        /*The slider values is 0 to 1, but music vol is saved as 1 to 100, therefore it has to be converted to a float as that's
+          the type used by the slider.*/
+        volume.value = float.Parse((Convert.ToDecimal(settings[0]) / 100).ToString());
+        water.value = Convert.ToInt32(settings[1]);
+        sand.value = Convert.ToInt32(settings[2]);
+        grass.value = Convert.ToInt32(settings[3]);
+        hill.value = Convert.ToInt32(settings[4]);
+        mountain.value = Convert.ToInt32(settings[5]);
+
+        Debug.Log("Applied");
+
+    }
+
+}
