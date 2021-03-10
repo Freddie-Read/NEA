@@ -31,10 +31,11 @@ public class Login : MonoBehaviour
         Debug.Log(succeeded.ToString());
         if (succeeded == true)
         {
-            /*If the user exists and their password is correct, their email is saved to the CurrentUser script, which is a helper function
+            /*If the user exists and their password is correct, their email and UserID are saved to the CurrentUser script, which is a helper function
               that stores the user's Email and their UserID for other functions to access. This means that the database can be accessed
               less, increasing speed times and meaning that people with either less or slower internets aren't hinderanced as much. */
             CurrentUser.email = emailField.text;
+            CurrentUser.userID = database.getUserID(emailField.text);
             //The next scene is loaded.
             SceneLoader sceneLoader = new SceneLoader();
             sceneLoader.LoadGame();
