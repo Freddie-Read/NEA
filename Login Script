@@ -1,0 +1,48 @@
+using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
+
+public class Login : MonoBehaviour
+{
+    //Publicly declaring variables so they can be assigned in Unity Editor.
+    public TMP_InputField emailField;
+    public TMP_InputField passwordField;
+    public Button continueBtn;
+    public TMP_Text failedLoginTxt;
+
+    //When the script is run, it "listens" out for the button to be clicked, and if it is, it triggers the login() function
+    void Start()
+    {
+        continueBtn.onClick.AddListener(login);
+    }
+
+    //This function takes the user input, and sends it to the database script, taking action based on the response.
+    public void login()
+    {
+        //Hides the text if it's displayed
+        failedLoginTxt.gameObject.SetActive(false);
+        Debug.Log("Clicked");
+        /*By default it won't login the user - if database is down, people won't be able to access it whereas, if it was true, there
+          would be a chance that people could enter the program. */
+        bool succeeded = false;
+        //Creates an instance of the Database script and validates if the email and password match. 
+        Database database = new Database();
+        succeeded = database.checkEmailPassword(emailField.text, passwordField.text);
+        Debug.Log(succeeded.ToString());
+        if (succeeded == true)
+        {
+            /*If the user exists and their password is correct, their email is saved to the CurrentUser script, which is a helper function
+              that stores the user's Email and their UserID for other functions to access. This means that the database can be accessed
+              less, increasing speed times and meaning that people with either less or slower internets aren't hinderanced as much. */
+            CurrentUser.email = emailField.text;
+            //The next scene is loaded.
+            SceneLoader sceneLoader = new SceneLoader();
+            sceneLoader.LoadGame();
+        }
+        else
+        {
+            //If the user doesn't exist or the password is wrong, it displays text telling them that they've failed to login.
+            failedLoginTxt.gameObject.SetActive(true);
+        }
+    }
+}
