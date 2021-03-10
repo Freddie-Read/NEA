@@ -3,14 +3,15 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-    public void LoadGame()
+    public void LoadNextScene()
     {
+        //Uses Unity's scenes option to order scenes and advance by 1.
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public void QuitGame()
     {
+        //Closes the program.
         Application.Quit();
-        Debug.Log("Quit");
     }
 }
