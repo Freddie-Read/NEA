@@ -24,17 +24,22 @@ public class PerlinNoise : MonoBehaviour
         //Randomises the offset values using Unity's Engine so that the map is different every time
         offsetX = UnityEngine.Random.Range(0, 99999); 
         offsetY = UnityEngine.Random.Range(0, 99999);
-        //Changes the texture of the renderer material (quad in main project) to whatever the function
-        //GenerateTexture() creates
-        seed.text = $"{getMapID()}";
+        /*Changes the texture of the renderer material (quad in main project) to whatever the function
+          GenerateTexture() creates*/
         Renderer renderer = GetComponent<Renderer>();
         renderer.material.mainTexture = GenerateTexture();
+        //Creates a mapID based on the seed's value and then displays it and stores it in the database.
+        string seedValue = getMapID();
+        seed.text = $"{seedValue}";
         Database database = new Database();
-        database.addMap(getMapID());
+        database.addMap(seedValue);
+
         //database.mapLeaderboard(seed.text, 10);
         //Astar.getBestPath();
     }
 
+    /*Gets offsetX and offsetY and increases the length to 5 digits so the overall ID is 10 digits long. Arbitrary 0s are added at the
+      start to keep the same number but increase the length. */
     public string getMapID()
     {
         string XmapID = offsetX.ToString();
@@ -73,7 +78,6 @@ public class PerlinNoise : MonoBehaviour
                 }
             }
         }
-        MapTextfile();
         //Applys the texture to the variable
         texture.Apply();
         return texture;
@@ -92,52 +96,28 @@ public class PerlinNoise : MonoBehaviour
         if (perlinVal < 0.2)
         {
             //Water
-            StoreMap(3, level);
-            //MapTextfile();
             return ColourChoice.giveColour(3);
         }
         else if (perlinVal < 0.4)
         {
             //Sand
-            StoreMap(1, level);
-            //MapTextfile();
             return ColourChoice.giveColour(1);
         }
         else if (perlinVal < 0.6)
         {
             //Grass
-            StoreMap(0, level);
-            //MapTextfile();
             return ColourChoice.giveColour(0);
         }
         else if (perlinVal < 0.8)
         {
             //Hills
-            StoreMap(2, level);
-            //MapTextfile();
             return ColourChoice.giveColour(2);
         }
         else
         {
             //Mountain
-            StoreMap(4, level);
-            //MapTextfile();
             return ColourChoice.giveColour(4);
         }
-    }
-
-    public static string[] mapArr = new string[25];
-    void StoreMap(int value, int level)
-    {
-        //Creates and populates the array mapArr with the map values
-        mapArr[level] = mapArr[level] + Convert.ToString(value);
-    }
-
-    void MapTextfile()
-    {
-        //Stores the map line by line in an external file
-        string filePath = @"C:\Users\Freddie\Desktop\textFiles\map.txt";
-        File.WriteAllLines(filePath, mapArr);
     }
 
 }
