@@ -9,7 +9,8 @@ public class AdjacencyList : MonoBehaviour
         int tile = startNode - '0';
         int prevTile = endNode - '0';
 
-        int[,] tileArr = { {1,  1,  1, 2, 2}, {1, 1, 2, 1, 5}, {1, 2, 2, 5, 1}, {2, 1, 5, 3, 7}, {2, 5, 1, 7, 4} };
+        //tileArr stores the movement costs for all the tiles in a small data structure making it fast to access and get an answer.
+        int[,] tileArr = { {1, 1, 1, 2, 2}, {1, 1, 2, 1, 5}, {1, 2, 2, 5, 1}, {2, 1, 5, 3, 7}, {2, 5, 1, 7, 4} };
 
         return tileArr[tile, prevTile];
     }
