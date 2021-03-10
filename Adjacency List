@@ -1,99 +1,16 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public class AdjacencyList : MonoBehaviour
 {
-    //Tests the code when the program is launched
-    private void Start()
-    {
-        createList();
-    }
-
-    void createList()
-    {
-        string path = @"C:\Users\Freddie\Desktop\textFiles\map.txt";
-        //string testPath = @"C:\Users\Freddie\Desktop\textFiles\Weights.txt";
-        string[] mapTxt = File.ReadAllLines(path);
-        int[,] map = new int[25, 25];
-        //Reads the file to a 2d array where weights are stored. The relevant tile can be derived from weight
-        
-        traverse(map);
-    }
-
-    int getWeights(int startNode, int endNode)
+    public static int GetWeights(char startNode, char endNode)
     {
         //Logic to calculate the weight of moving from tile to tile
 
-        //Change numbers to match weights rather than tile numbers
-        if (startNode == endNode)
-        {
-            return 0;
-        }
-        //3 = water, 1 = sand, 0 = grass, 2 = hill, 4 = mountain
-        if (startNode == 3 || endNode == 3) //Water
-        {
-            if (startNode == 1 || endNode == 1)
-            {
-                return 1;
-            }
-            else if (startNode == 0 || endNode == 0)
-            {
-                return 2;
-            }
-            else if (startNode == 2 || endNode == 2)
-            {
-                return 5;
-            }
-            else if (startNode == 4 || endNode == 4)
-            {
-                return 7;
-            }
-        }
-        else if (startNode == 1 || endNode == 1) //Sand
-        {
-            if (startNode == 0 || endNode == 0)
-            {
-                return 1;
-            }
-            else if (startNode == 2 || endNode == 2)
-            {
-                return 2;
-            }
-            else if (startNode == 4 || endNode == 4)
-            {
-                return 5;
-            }
-        }
-        else if (startNode == 0 || endNode == 0) //Grass
-        {
-            if (startNode == 2 || endNode == 2)
-            {
-                return 1;
-            }
-            else if (startNode == 4 || endNode == 4)
-            {
-                return 2;
-            }
-        }
+        int tile = startNode - '0';
+        int prevTile = endNode - '0';
 
-        return 5;
+        int[,] tileArr = { {1,  1,  1, 2, 2}, {1, 1, 2, 1, 5}, {1, 2, 2, 5, 1}, {2, 1, 5, 3, 7}, {2, 5, 1, 7, 4} };
+
+        return tileArr[tile, prevTile];
     }
-
-    void traverse(int[,] map)
-    {
-        (int x, int y) currentSquare = (0, 0);
-        if (map[currentSquare.x, currentSquare.y] == map[currentSquare.x + 1, currentSquare.y])
-        {
-            Debug.Log(getWeights(map[currentSquare.x, currentSquare.y], -1));
-        }
-        else
-        {
-            Debug.Log(getWeights(map[currentSquare.x, currentSquare.y], map[currentSquare.x + 1, currentSquare.y]));
-        }
-
-    }
-
 }
