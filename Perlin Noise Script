@@ -96,28 +96,40 @@ public class PerlinNoise : MonoBehaviour
         if (perlinVal < 0.2)
         {
             //Water
+            StoreMap(3, level);
             return ColourChoice.giveColour(3);
         }
         else if (perlinVal < 0.4)
         {
             //Sand
+            StoreMap(1, level);
             return ColourChoice.giveColour(1);
         }
         else if (perlinVal < 0.6)
         {
             //Grass
+            StoreMap(0, level);
             return ColourChoice.giveColour(0);
         }
         else if (perlinVal < 0.8)
         {
             //Hills
+            StoreMap(2, level);
             return ColourChoice.giveColour(2);
         }
         else
         {
             //Mountain
+            StoreMap(4, level);
             return ColourChoice.giveColour(4);
         }
+    }
+
+    public static string[] mapArr = new string[25];
+    void StoreMap(int value, int level)
+    {
+        //Creates and populates the array mapArr with the map values
+        mapArr[level] = mapArr[level] + Convert.ToString(value);
     }
 
 }
