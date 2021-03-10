@@ -1,24 +1,20 @@
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
 public class PreviewColour : MonoBehaviour
 {
+    //Publicly declaring variables so they can be assigned in Unity Editor.
     public TMP_Dropdown dropdown;
-    Image displayColour;
+    public Image displayColour;
 
-    void Start()
-    {
-        displayColour = GetComponent<Image>();
-    }
 
     void Update()
     {
-        List<string> colourIndex = GetColours.giveColour(0);
+        //Checks the colour selected in the dropdown box every frame and displays it in the image.
         Color32 colour = ColourChoice.ColourMatch(dropdown.value);
 
         displayColour.color = colour;
-    }       
-        
+    }
+
 }
